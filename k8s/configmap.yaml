@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: app-ts
+  namespace: application-one
+data:
+  APP: rocketseat-app
