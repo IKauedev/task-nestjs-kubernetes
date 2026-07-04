@@ -1,73 +1,103 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+﻿# app-ts
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST de gerenciamento de tarefas construída com [NestJS](https://nestjs.com/) e TypeScript. Pensada para rodar em Kubernetes (local com Kind ou em qualquer cluster).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tecnologias
 
-## Description
+- **Node.js 20** + **TypeScript**
+- **NestJS 10**
+- **Swagger / OpenAPI** — documentação interativa em `/api`
+- **Docker** (multi-stage build com `node:20-alpine`)
+- **Kubernetes** — manifests prontos em `k8s/`
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Funcionalidades
 
-## Installation
+- CRUD completo de tarefas (`/tasks`)
+- Filtro de tarefas por status via query param
+- Status possíveis: `PENDING`, `IN_PROGRESS`, `DONE`
+- Health check em `/health`
+- Documentação Swagger em `/api`
+
+## Pré-requisitos
+
+- Node.js 20+
+- npm ou yarn
+
+## Instalação
 
 ```bash
-$ yarn install
+npm install
+# ou
+yarn install
 ```
 
-## Running the app
+## Executando a aplicação
 
 ```bash
-# development
-$ yarn run start
+# desenvolvimento
+npm run start
 
-# watch mode
-$ yarn run start:dev
+# modo watch (hot reload)
+npm run start:dev
 
-# production mode
-$ yarn run start:prod
+# produção
+npm run start:prod
 ```
 
-## Test
+A API ficará disponível em `http://localhost:3000`.  
+A documentação Swagger estará em `http://localhost:3000/api`.
+
+## Testes
 
 ```bash
-# unit tests
-$ yarn run test
+# testes unitários
+npm run test
 
-# e2e tests
-$ yarn run test:e2e
+# testes e2e
+npm run test:e2e
 
-# test coverage
-$ yarn run test:cov
+# cobertura
+npm run test:cov
 ```
 
-## Support
+## Endpoints principais
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+| Método | Rota          | Descrição                                      |
+|--------|---------------|------------------------------------------------|
+| GET    | `/tasks`      | Lista todas as tarefas (filtro por `?status=`) |
+| GET    | `/tasks/:id`  | Busca tarefa por UUID                          |
+| POST   | `/tasks`      | Cria nova tarefa                               |
+| PATCH  | `/tasks/:id`  | Atualiza tarefa                                |
+| DELETE | `/tasks/:id`  | Remove tarefa                                  |
+| GET    | `/health`     | Health check                                   |
 
-## Stay in touch
+## Docker
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+# build da imagem
+docker build -t app-ts .
 
-## License
+# executar o container
+docker run -p 3000:3000 app-ts
+```
 
-Nest is [MIT licensed](LICENSE).
+## Deploy no Kubernetes (Kind)
+
+Consulte o guia completo em [LOCAL-KIND-DEPLOY.md](LOCAL-KIND-DEPLOY.md).
+
+Resumo rápido:
+
+```powershell
+# criar cluster
+kind create cluster --name meu-cluster --config k8s/kind.yaml
+
+# carregar imagem no cluster
+kind load docker-image app-ts:latest --name meu-cluster
+
+# aplicar manifests
+kubectl apply -f k8s/
+```
+
+## Licença
+
+UNLICENSED
